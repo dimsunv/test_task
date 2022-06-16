@@ -1,0 +1,24 @@
+stages:
+    - build
+    - deploy
+
+building:
+    stage: build
+    tags:
+        - build
+    script:
+        - sudo docker pull python:3.10.5-bullseye
+        - sudo docker build -t test-build:0.1.0 .
+        - mkdir image
+        - sudo docker save -o image/test-build-0-1-0.tar test-build:0.1.0
+    artifacts:
+        paths:
+            - image/
+
+deploing:
+    stage: deploy
+    tags:
+        - deploy
+    script:
+        - sudo docker load -i image/test-build-0-1-0.tar
+        - sudo docker run test-build:0.1.0
